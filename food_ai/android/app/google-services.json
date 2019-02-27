@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "928962186516",
+    "firebase_url": "https://foodai-31060.firebaseio.com",
+    "project_id": "foodai-31060",
+    "storage_bucket": "foodai-31060.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:928962186516:android:3b96d5faca4b3ac7",
+        "android_client_info": {
+          "package_name": "com.example.foodai"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "928962186516-d6pliagm4umcc1rpian2j6ld9mrfivgm.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.foodai",
+            "certificate_hash": "c29b67eb6207861bd1790505677604ee94e2156e"
+          }
+        },
+        {
+          "client_id": "928962186516-aeuc9jliluhu8hdcujaeo0ra8qd2h9k0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDD3PqgtNyyTimjI5fJZsfi21B5w-Da2q8"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "928962186516-aeuc9jliluhu8hdcujaeo0ra8qd2h9k0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
