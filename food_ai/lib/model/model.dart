@@ -189,23 +189,24 @@ class Model {
   }
 
   Future _uploadImage() async {
+    StorageReference ref =FirebaseStorage.instance.ref().child(this._filename);
+    StorageUploadTask upload = ref.putFile(this._image);
+    var downUrl = await (await upload.onComplete).ref.getDownloadURL();
     Map<String, dynamic> dailyFood = {
-      'Photo': this._filename,
+      'Photo': downUrl.toString(),
       'Name': this._filename,
     };
-
-    FirebaseStorage.instance.ref().child(this._filename).putFile(this._image);
     _dailyFoodRef.add(dailyFood);
   }
 
-  /*Future getDailyFoodList() async {
+  Future getDailyFoodList() async {
     QuerySnapshot _qn = await Firestore.instance
         .collection('user')
         .document(this._uid)
-        .collection('daily food')
+        .collection('daily food').getDocuments()
         ;
     return _qn.documents;
-  }*/
+  }
 }
 
 Model userModel = new Model();

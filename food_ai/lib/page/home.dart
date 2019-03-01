@@ -67,16 +67,6 @@ class _HomePageState extends State<HomePage> {
     });
   }*/
 
-  Future getList() async {
-    var firestore = Firestore.instance;
-    QuerySnapshot qn = await firestore
-        .collection('user')
-        .document(userModel.getId())
-        .collection('daily food')
-        .getDocuments();
-    return qn.documents;
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -94,39 +84,46 @@ class _HomePageState extends State<HomePage> {
           )
         ],
       ),
-      body: Center(
-          child: SingleChildScrollView(
-        child: Column(
+      body: new Builder(builder: (BuildContext context) {
+        return Column(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: <Widget>[
-            Container(
-                child: Padding(
-                    padding: EdgeInsets.only(top: 30),
-                    child: AnimatedCircularChart(
-                      key: _chartKey,
-                      size: const Size(180.0, 180.0),
-                      initialChartData: data,
-                      chartType: CircularChartType.Radial,
-                      holeLabel: userModel.getCal().toString() + ' Cal',
-                      holeRadius: 40.0,
-                    ))),
-            Container(
-                child: Padding(
-                    padding: EdgeInsets.all(15.0),
-                    child: StreamBuilder(
-                        stream: Firestore.instance
-                            .collection('user')
-                            .document(userModel.getId())
-                            .collection('daily food')
-                            .snapshots(),
-                        builder: (context, snapshot) {
-                          if (!snapshot.hasData)
-                            return CircularProgressIndicator();
-                          return FirestoreListView(
-                              documents: snapshot.data.documents);
-                        }))),
+            Expanded(
+                flex: 4,
+                child: AnimatedCircularChart(
+                  key: _chartKey,
+                  size: const Size(180.0, 180.0),
+                  initialChartData: data,
+                  chartType: CircularChartType.Radial,
+                  holeLabel: userModel.getCal().toString() + ' Cal',
+                  holeRadius: 40.0,
+                )),
+            Expanded(
+                flex: 6,
+                child: FutureBuilder(
+                    future: userModel.getDailyFoodList(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting)
+                        return Center(child: CircularProgressIndicator());
+                      else {
+                        return ListView.builder(
+                            itemCount: snapshot.data.length,
+                            itemBuilder: (context, index) {
+                              return ListTile(
+                                leading: new CircleAvatar(
+                                  radius: 30.0,
+                                  backgroundColor: Colors.transparent,
+                                child: Image.network(snapshot
+                                    .data[index].data['Photo'],scale: 0.3,)),
+                                title: Text(snapshot
+                                    .data[index].data['Name']),
+                              );
+                            });
+                      }
+                    })),
           ],
-        ),
-      )),
+        );
+      }),
       floatingActionButton: new AnimatedFloatingActionButton(
         fabButtons: <Widget>[camera(), gallery()],
         colorStartAnimation: Colors.blue,
