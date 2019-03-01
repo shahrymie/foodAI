@@ -26,6 +26,7 @@ dependencies:
   firebase_storage: ^1.0.4
   animated_floatactionbuttons: ^0.1.0
   tflite: ^1.0.1
+  mlkit: ^0.10.0
   rxdart: 
 
   # The following adds the Cupertino Icons font to your application.

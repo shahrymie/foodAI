@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:food_ai/model/model.dart';
-
 import 'package:tflite/tflite.dart';
 
 const String mobile = "MobileNet";
@@ -17,14 +16,21 @@ class ImgRecPage extends StatefulWidget {
 class _ImgRecPageState extends State<ImgRecPage> {
   File _image;
   List _recognitions;
-  String res;
   double _imageHeight;
   double _imageWidth;
+
+  Future loadModel() async {
+    var res = await Tflite.loadModel(
+      model: "assets/optimized_graph.tflite",
+      labels: "assets/retrained_labels.txt",
+    );
+    print(res);
+  }
 
   Future getImage() async {
     var image = await userModel.getImage();
     recognizeImage(image);
-  
+
     new FileImage(image)
         .resolve(new ImageConfiguration())
         .addListener((ImageInfo info, bool _) {
@@ -45,15 +51,6 @@ class _ImgRecPageState extends State<ImgRecPage> {
     loadModel();
     getImage();
   }
-
-  Future loadModel() async {
-   
-      this.res = await Tflite.loadModel(
-            model: "assets/optimized_graph.tflite",
-            labels: "assets/retrained_label.txt",
-          );
-      }
-      
 
   Future recognizeImage(File image) async {
     var recognitions = await Tflite.runModelOnImage(
@@ -101,35 +98,42 @@ class _ImgRecPageState extends State<ImgRecPage> {
 
   @override
   Widget build(BuildContext context) {
-    Size size = MediaQuery.of(context).size;
-    
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('tflite example app'),
-      ),
-      body:  Stack(
-              children: <Widget>[
-                Container(
-                  child: _image == null
-                      ? Text('No image selected.')
-                      : Image.file(_image),
-                ),
-                Center(
-                        child: Column(
-                          children: _recognitions.map((res) {
-                                  return Text(
-                                    "${res["index"]} - ${res["label"]}: ${res["confidence"].toString()}",
-                                    style: TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 20.0,
-                                      background: Paint()..color = Colors.white,
-                                    ),
-                                  );
-                                }).toList()
+      body: Center(
+        child: Column(
+        children: <Widget>[
+          Container(
+              padding: EdgeInsets.fromLTRB(30, 0, 30, 10),
+              child: new RaisedButton(
+                onPressed: () {
+                  loadModel();
+                  getImage();
+                },
+                child: Text('Start'),
+              )),
+          Container(
+            child: _image == null
+                ? Text('No image selected.')
+                : Image.file(_image),
+          ),
+          Container(
+            child: Column(
+              children: _recognitions != null
+                  ? _recognitions.map((res) {
+                      return Text(
+                        "${res["index"]} - ${res["label"]}: ${res["confidence"].toString()}",
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 20.0,
+                          background: Paint()..color = Colors.white,
                         ),
-                      )
-              ],
+                      );
+                    }).toList()
+                  : [Text("Unsuccessful")]
             ),
+          )
+        ],
+      )),
     );
   }
 }

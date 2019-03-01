@@ -30,6 +30,7 @@ class _HomePageState extends State<HomePage> {
       child: new FloatingActionButton(
         onPressed: () {
           userModel.getGallery();
+          Navigator.pushNamed(context, "imgpage");
         },
         tooltip: 'Gallery',
         child: Icon(Icons.image),
@@ -52,7 +53,8 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
-  /*void _incrementCounter() {
+  
+  void _incrementCounter() {
     userModel.addFoodCal();
     List<CircularStackEntry> nextData = <CircularStackEntry>[
       new CircularStackEntry(
@@ -65,7 +67,7 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       _chartKey.currentState.updateData(nextData);
     });
-  }*/
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -100,8 +102,8 @@ class _HomePageState extends State<HomePage> {
                 )),
             Expanded(
                 flex: 6,
-                child: FutureBuilder(
-                    future: userModel.getDailyFoodList(),
+                child: StreamBuilder(
+                    stream: userModel.getDailyFoodList().asStream(),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting)
                         return Center(child: CircularProgressIndicator());
@@ -110,13 +112,18 @@ class _HomePageState extends State<HomePage> {
                             itemCount: snapshot.data.length,
                             itemBuilder: (context, index) {
                               return ListTile(
-                                leading: new CircleAvatar(
-                                  radius: 30.0,
-                                  backgroundColor: Colors.transparent,
-                                child: Image.network(snapshot
-                                    .data[index].data['Photo'],scale: 0.3,)),
-                                title: Text(snapshot
-                                    .data[index].data['Name']),
+                                leading: new Container(
+                                    width: 50.0,
+                                    height: 50.0,
+                                    decoration: new BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        image: new DecorationImage(
+                                            fit: BoxFit.fill,
+                                            image: new NetworkImage(snapshot
+                                                .data[index].data['Photo'])))),
+                                title: Text(snapshot.data[index].data['Name']),
+                                subtitle: Text("300 Cal"),
+                                trailing: Icon(Icons.info_outline),
                               );
                             });
                       }
