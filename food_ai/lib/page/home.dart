@@ -28,7 +28,9 @@ class _HomePageState extends State<HomePage> {
   Widget gallery() {
     return Container(
       child: new FloatingActionButton(
-        onPressed: userModel.getGallery,
+        onPressed: () {
+          userModel.getGallery();
+        },
         tooltip: 'Gallery',
         child: Icon(Icons.image),
         mini: true,
@@ -40,7 +42,9 @@ class _HomePageState extends State<HomePage> {
   Widget camera() {
     return Container(
       child: new FloatingActionButton(
-        onPressed: userModel.getCamera,
+        onPressed: () {
+          userModel.getCamera();
+        },
         tooltip: 'Camera',
         child: Icon(Icons.camera_alt),
         mini: true,

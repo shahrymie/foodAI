@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -180,16 +179,16 @@ class Model {
   Future getCamera() async {
     this._image = await ImagePicker.pickImage(source: ImageSource.camera);
     this._filename = basename(this._image.path);
-    uploadImage();
+    _uploadImage();
   }
 
   Future getGallery() async {
     this._image = await ImagePicker.pickImage(source: ImageSource.gallery);
     this._filename = basename(this._image.path);
-    uploadImage();
+    _uploadImage();
   }
 
-  Future uploadImage() async {
+  Future _uploadImage() async {
     Map<String, dynamic> dailyFood = {
       'Photo': this._filename,
       'Name': this._filename,
