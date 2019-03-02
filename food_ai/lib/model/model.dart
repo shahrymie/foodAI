@@ -1,8 +1,10 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:path/path.dart';
+import 'package:tflite/tflite.dart';
 
 class Model {
   String _uid,
@@ -77,7 +79,7 @@ class Model {
     _profileRef.document(this._pid).updateData({'Cal': this._bmr});
   }
 
-  void setProfile() async {
+  void setProfile() async{
     _profileRef.getDocuments().then((onValue) {
       this._gender = onValue.documents[0].data['Gender'];
       this._age = onValue.documents[0].data['Age'];
@@ -189,7 +191,7 @@ class Model {
   }
 
   Future _uploadImage() async {
-    StorageReference ref =FirebaseStorage.instance.ref().child(this._filename);
+    StorageReference ref = FirebaseStorage.instance.ref().child(this._filename);
     StorageUploadTask upload = ref.putFile(this._image);
     var downUrl = await (await upload.onComplete).ref.getDownloadURL();
     Map<String, dynamic> dailyFood = {
@@ -203,8 +205,8 @@ class Model {
     QuerySnapshot _qn = await Firestore.instance
         .collection('user')
         .document(this._uid)
-        .collection('daily food').getDocuments()
-        ;
+        .collection('daily food')
+        .getDocuments();
     return _qn.documents;
   }
 }

@@ -100,8 +100,7 @@ class _ProfilePageState extends State<ProfilePage> {
     await showDialog(
         context: context,
         builder: (BuildContext context) {
-          return SingleChildScrollView(
-              child: SimpleDialog(
+          return SimpleDialog(
             contentPadding: EdgeInsets.all(15.0),
             title: new Text('Input new age'),
             children: <Widget>[
@@ -127,7 +126,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 child: Text('Submit'),
               )
             ],
-          ));
+          );
         });
   }
 
@@ -138,7 +137,8 @@ class _ProfilePageState extends State<ProfilePage> {
         title: new Text('User Profile'),
         automaticallyImplyLeading: false,
       ),
-      body: Padding(
+      body: SingleChildScrollView(
+          child: Padding(
         padding: EdgeInsets.fromLTRB(20, 30, 0, 30),
         child: Column(
           children: <Widget>[
@@ -203,7 +203,7 @@ class _ProfilePageState extends State<ProfilePage> {
             )
           ],
         ),
-      ),
+      )),
     );
   }
 }

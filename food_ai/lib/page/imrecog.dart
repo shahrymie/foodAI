@@ -4,10 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:food_ai/model/model.dart';
 import 'package:tflite/tflite.dart';
 
-const String mobile = "MobileNet";
-const String ssd = "SSD MobileNet";
-const String yolo = "Tiny YOLOv2";
-
 class ImgRecPage extends StatefulWidget {
   @override
   _ImgRecPageState createState() => new _ImgRecPageState();
@@ -48,8 +44,6 @@ class _ImgRecPageState extends State<ImgRecPage> {
   @override
   void initState() {
     super.initState();
-    loadModel();
-    getImage();
   }
 
   Future recognizeImage(File image) async {
@@ -63,6 +57,43 @@ class _ImgRecPageState extends State<ImgRecPage> {
     setState(() {
       _recognitions = recognitions;
     });
+  }
+
+  Future<Null> imgRec() async {
+    loadModel();
+    getImage();
+    await showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return SimpleDialog(
+            contentPadding: EdgeInsets.all(15.0),
+            children: <Widget>[
+              Container(
+                child: _image == null
+                    ? Text('No image selected.')
+                    : Image.file(_image),
+              ),
+              Container(
+                child: Column(
+                    children: _recognitions != null
+                        ? _recognitions.map((res) {
+                            if (res["confidence"] > 0.5) {
+                              return Text(
+                                "${res["index"]} - ${res["label"]}: ${res["confidence"].toString()}",
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 20.0,
+                                  background: Paint()..color = Colors.white,
+                                ),
+                              );
+                            } else
+                              return Text("");
+                          }).toList()
+                        : [Text("Unsuccessful")]),
+              )
+            ],
+          );
+        });
   }
 
   List<Widget> renderBoxes(Size screen) {
@@ -100,7 +131,7 @@ class _ImgRecPageState extends State<ImgRecPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: Column(
+          child: Column(
         children: <Widget>[
           Container(
               padding: EdgeInsets.fromLTRB(30, 0, 30, 10),
@@ -118,19 +149,21 @@ class _ImgRecPageState extends State<ImgRecPage> {
           ),
           Container(
             child: Column(
-              children: _recognitions != null
-                  ? _recognitions.map((res) {
-                      return Text(
-                        "${res["index"]} - ${res["label"]}: ${res["confidence"].toString()}",
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 20.0,
-                          background: Paint()..color = Colors.white,
-                        ),
-                      );
-                    }).toList()
-                  : [Text("Unsuccessful")]
-            ),
+                children: _recognitions != null
+                    ? _recognitions.map((res) {
+                        if (res["confidence"] > 0.5) {
+                          return Text(
+                            "${res["index"]} - ${res["label"]}: ${res["confidence"].toString()}",
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 20.0,
+                              background: Paint()..color = Colors.white,
+                            ),
+                          );
+                        } else
+                          return Text("");
+                      }).toList()
+                    : [Text("Unsuccessful")]),
           )
         ],
       )),
