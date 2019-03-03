@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
@@ -13,16 +12,14 @@ class Model {
       _photo,
       _gender,
       _date,
-      _foodname,
-      _ref,
-      _filename;
+      _filename;   
   List<dynamic> foodInfo = List<dynamic>(7);
-  num _age, _height, _weight, _serving, _cal, _carb, _fat, _protein;
-  double _bmr, _totalcal;
+  num _age, _height, _weight;
+  double _bmr,_cal;
   File _image;
+  var _downUrl; 
   CollectionReference _profileRef, _dailyFoodRef;
   DocumentReference _userRef;
-  DocumentReference _foodRef;
   Map<String, dynamic> dailyFood;
 
   void setUser(String id, String name, String email, String photo) async {
@@ -113,8 +110,14 @@ class Model {
     });
   }
 
-  void _updateCal() async {
+  void updateCal(num cal) async {
     if (getDate() == '0.00') this._cal = 0;
+    else this._cal = this._cal+cal;
+    _profileRef.document(this._pid).updateData({'Cal': this._cal});
+  }
+
+  double getCal(){
+    return this._cal;
   }
 
   getId() {
@@ -157,12 +160,11 @@ class Model {
     return this._weight;
   }
 
-  getBMR() {
+  double getBMR() {
     return this._bmr;
   }
 
-  double getCal() {
-    _updateCal();
+  double getDailyCalorie() {
     return this._bmr - this._cal;
   }
 
@@ -207,12 +209,16 @@ class Model {
   Future uploadImage() async {
     StorageReference ref = FirebaseStorage.instance.ref().child(this._filename);
     StorageUploadTask upload = ref.putFile(this._image);
-    var downUrl = await (await upload.onComplete).ref.getDownloadURL();
+    this._downUrl = await (await upload.onComplete).ref.getDownloadURL();
+  }
+
+  Future setDailyFood() async{
     Map<String, dynamic> dailyFood = {
-      'Photo': downUrl.toString(),
-      'Name': null,
+      'Photo': _downUrl.toString(),
+      'Name': getNutrition(0),
       'ID': this._filename,
-      'Serving': 1
+      'Serving': 1,
+      'Cal':getNutrition(2)
     };
     _dailyFoodRef.add(dailyFood).then((onValue) {
       this._dfid = onValue.documentID;
@@ -220,16 +226,9 @@ class Model {
   }
 
   Future getDailyFoodList() async {
-    QuerySnapshot _qn = await Firestore.instance
-        .collection('user')
-        .document(this._uid)
-        .collection('daily food')
+    QuerySnapshot _qn = await _dailyFoodRef
         .getDocuments();
     return _qn.documents;
-  }
-
-  getNutritionList() {
-    return foodInfo;
   }
 
   getNutrition(int index) {

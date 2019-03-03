@@ -22,7 +22,7 @@ class _HomePageState extends State<HomePage> {
   List<CircularStackEntry> data = <CircularStackEntry>[
     new CircularStackEntry(
       <CircularSegmentEntry>[
-        new CircularSegmentEntry(userModel.getBMR(), Colors.greenAccent,
+        new CircularSegmentEntry(userModel.getDailyCalorie(), Colors.greenAccent,
             rankKey: 'Calorie'),
         new CircularSegmentEntry(userModel.getCal(), Colors.grey)
       ],
@@ -65,7 +65,7 @@ class _HomePageState extends State<HomePage> {
     List<CircularStackEntry> nextData = <CircularStackEntry>[
       new CircularStackEntry(
         <CircularSegmentEntry>[
-          new CircularSegmentEntry(userModel.getBMR(), Colors.greenAccent),
+          new CircularSegmentEntry(userModel.getDailyCalorie(), Colors.greenAccent),
           new CircularSegmentEntry(userModel.getCal(), Colors.white)
         ],
       )
@@ -120,6 +120,7 @@ class _HomePageState extends State<HomePage> {
                   if (res["confidence"] > 0.5) {
                     userModel.setFileName(res["label"]);
                     userModel.setNutrition();
+                    userModel.uploadImage();
                     return Padding(
                         padding: EdgeInsets.all(20.0),
                         child: new Text(
@@ -166,18 +167,6 @@ class _HomePageState extends State<HomePage> {
         });
   }
 
-  Future<Null> _askWeight() async {
-    await showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return SimpleDialog(
-            contentPadding: EdgeInsets.all(15.0),
-            children: <Widget>[Center(child: CircularProgressIndicator(
-            ))],
-          );
-        });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -206,7 +195,7 @@ class _HomePageState extends State<HomePage> {
                   size: const Size(180.0, 180.0),
                   initialChartData: data,
                   chartType: CircularChartType.Radial,
-                  holeLabel: userModel.getCal().toString() + ' Cal',
+                  holeLabel: userModel.getDailyCalorie().toString() + ' Cal',
                   holeRadius: 40.0,
                 )),
             Expanded(
@@ -231,7 +220,7 @@ class _HomePageState extends State<HomePage> {
                                             image: new NetworkImage(snapshot
                                                 .data[index].data['Photo'])))),
                                 title: Text(snapshot.data[index].data['Name']),
-                                subtitle: Text("300 Cal"),
+                                subtitle: Text(snapshot.data[index].data['Cal'].toString()+" Cal"),
                                 trailing: Icon(Icons.info_outline),
                               );
                             });

@@ -14,14 +14,8 @@ class _SetupPageState extends State<SetupPage> {
     'Height': null,
     'Weight': null,
     'BMR': null,
-    'Cal': null,
-    'FoodCal': 0.0
+    'Cal': 0.0,
   };
-
-  /*Map<String, dynamic> dailyFood = {
-    'Photo': null,
-    'Name': null,
-  };*/
 
   @override
   void initState() {
@@ -32,12 +26,6 @@ class _SetupPageState extends State<SetupPage> {
         userModel.setPid(onValue.documents[0].documentID);
       });
     });
-    /*userModel.getDailyFoodRef().add(dailyFood);
-    userModel.getDailyFoodRef().getDocuments().then((onValue) {
-      setState(() {
-        userModel.setDfid(onValue.documents[0].documentID);
-      });
-    });*/
   }
 
   var genders = ['Male', 'Female'];

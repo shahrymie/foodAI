@@ -18,14 +18,14 @@ class _FoodPageState extends State<FoodPage> {
       ),
       body: SingleChildScrollView(
           child: Padding(
-        padding: EdgeInsets.fromLTRB(20, 30, 0, 30),
+        padding: EdgeInsets.fromLTRB(20, 20, 0, 0),
         child: Column(
           children: <Widget>[
             Row(
               children: <Widget>[
                 Container(
-                    width: 130.0,
-                    height: 130.0,
+                    width: 120.0,
+                    height: 120.0,
                     decoration: new BoxDecoration(
                         shape: BoxShape.circle,
                         image: new DecorationImage(
@@ -60,10 +60,10 @@ class _FoodPageState extends State<FoodPage> {
               padding: const EdgeInsets.fromLTRB(0, 25, 10, 10),
               children: <Widget>[
                 ListTile(
-                  contentPadding: EdgeInsets.only(top: 20),
+                  contentPadding: EdgeInsets.only(top: 15),
                   leading: new Container(
-                      width: 50.0,
-                      height: 50.0,
+                      width: 40.0,
+                      height: 40.0,
                       decoration: new BoxDecoration(
                           shape: BoxShape.circle,
                           image: new DecorationImage(
@@ -74,10 +74,10 @@ class _FoodPageState extends State<FoodPage> {
                   trailing: Text(userModel.getNutrition(3).toString() + " g"),
                 ),
                 ListTile(
-                  contentPadding: EdgeInsets.only(top: 20),
+                  contentPadding: EdgeInsets.only(top: 15),
                   leading: new Container(
-                      width: 50.0,
-                      height: 50.0,
+                      width: 40.0,
+                      height: 40.0,
                       decoration: new BoxDecoration(
                           shape: BoxShape.circle,
                           image: new DecorationImage(
@@ -88,10 +88,10 @@ class _FoodPageState extends State<FoodPage> {
                   trailing: Text(userModel.getNutrition(4).toString() + " g"),
                 ),
                 ListTile(
-                  contentPadding: EdgeInsets.only(top: 20),
+                  contentPadding: EdgeInsets.only(top: 15),
                   leading: new Container(
-                      width: 50.0,
-                      height: 50.0,
+                      width: 40.0,
+                      height: 40.0,
                       decoration: new BoxDecoration(
                           shape: BoxShape.circle,
                           image: new DecorationImage(
@@ -102,10 +102,10 @@ class _FoodPageState extends State<FoodPage> {
                   trailing: Text(userModel.getNutrition(5).toString() + " g"),
                 ),
                 ListTile(
-                  contentPadding: EdgeInsets.only(top: 20),
+                  contentPadding: EdgeInsets.only(top: 15),
                   leading: new Container(
-                      width: 50.0,
-                      height: 50.0,
+                      width: 40.0,
+                      height: 40.0,
                       decoration: new BoxDecoration(
                           shape: BoxShape.circle,
                           image: new DecorationImage(
@@ -128,15 +128,17 @@ class _FoodPageState extends State<FoodPage> {
           ],
         ),
       )),
-    );
-    /*FloatingActionButton(
+      floatingActionButton: FloatingActionButton(
         onPressed: () {
+          userModel.setDailyFood();
+          userModel.updateCal(userModel.getNutrition(2));
           Navigator.pop(context);
         },
-        tooltip: 'Camera',
-        child: Icon(Icons.add_circle),
-        mini: true,
-        heroTag: "btnCamera",
-      );*/
+        tooltip: 'Save',
+        child: Icon(Icons.add),
+        heroTag: "btnSave",
+      )
+    );
+    
   }
 }
