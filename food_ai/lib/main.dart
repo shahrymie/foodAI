@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:food_ai/page/imrecog.dart';
+import 'package:food_ai/page/foodinfo.dart';
 import 'package:food_ai/page/login.dart';
 import 'package:food_ai/page/navigation.dart';
 import 'package:food_ai/page/setup.dart';
@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
           "loginpage": (context) => LoginPage(),
           "setuppage": (context) => SetupPage(),
           "navpage": (context) => NavPage(),
-          "imgpage": (context) => ImgRecPage(),
+          "foodpage": (context) => FoodPage(),
         },
         home: LoginPage());
   }

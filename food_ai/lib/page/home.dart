@@ -15,8 +15,6 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   File _image;
   List _recognitions;
-  double _imageHeight;
-  double _imageWidth;
 
   final GlobalKey<AnimatedCircularChartState> _chartKey =
       new GlobalKey<AnimatedCircularChartState>();
@@ -24,9 +22,9 @@ class _HomePageState extends State<HomePage> {
   List<CircularStackEntry> data = <CircularStackEntry>[
     new CircularStackEntry(
       <CircularSegmentEntry>[
-        new CircularSegmentEntry(userModel.getCal(), Colors.greenAccent,
+        new CircularSegmentEntry(userModel.getBMR(), Colors.greenAccent,
             rankKey: 'Calorie'),
-        new CircularSegmentEntry(userModel.getFoodCal(), Colors.grey)
+        new CircularSegmentEntry(userModel.getCal(), Colors.grey)
       ],
     )
   ];
@@ -64,12 +62,11 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _incrementCounter() {
-    userModel.addFoodCal();
     List<CircularStackEntry> nextData = <CircularStackEntry>[
       new CircularStackEntry(
         <CircularSegmentEntry>[
-          new CircularSegmentEntry(userModel.getCal(), Colors.greenAccent),
-          new CircularSegmentEntry(userModel.getFoodCal(), Colors.white)
+          new CircularSegmentEntry(userModel.getBMR(), Colors.greenAccent),
+          new CircularSegmentEntry(userModel.getCal(), Colors.white)
         ],
       )
     ];
@@ -83,21 +80,11 @@ class _HomePageState extends State<HomePage> {
       model: "assets/optimized_graph.tflite",
       labels: "assets/retrained_labels.txt",
     );
-    print(res);
   }
 
   Future getImage() async {
-    var image = await userModel.getImage();
+    var image = userModel.getImage();
     recognizeImage(image);
-
-    new FileImage(image)
-        .resolve(new ImageConfiguration())
-        .addListener((ImageInfo info, bool _) {
-      setState(() {
-        _imageHeight = info.image.height.toDouble();
-        _imageWidth = info.image.width.toDouble();
-      });
-    });
 
     setState(() {
       _image = image;
@@ -117,37 +104,6 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  List<Widget> renderBoxes(Size screen) {
-    if (_recognitions == null) return [];
-    double factorX = screen.width;
-    double factorY = _imageHeight / _imageWidth * screen.width;
-    Color blue = Color.fromRGBO(37, 213, 253, 1.0);
-    return _recognitions.map((re) {
-      return Positioned(
-        left: re["rect"]["x"] * factorX,
-        top: re["rect"]["y"] * factorY,
-        width: re["rect"]["w"] * factorX,
-        height: re["rect"]["h"] * factorY,
-        child: Container(
-          decoration: BoxDecoration(
-            border: Border.all(
-              color: blue,
-              width: 2,
-            ),
-          ),
-          child: Text(
-            "${re["detectedClass"]} ${(re["confidenceInClass"] * 100).toStringAsFixed(0)}%",
-            style: TextStyle(
-              background: Paint()..color = blue,
-              color: Colors.white,
-              fontSize: 12.0,
-            ),
-          ),
-        ),
-      );
-    }).toList();
-  }
-  
   Future<Null> imgRec() async {
     loadModel();
     getImage();
@@ -157,26 +113,67 @@ class _HomePageState extends State<HomePage> {
           return SimpleDialog(
             contentPadding: EdgeInsets.all(15.0),
             children: <Widget>[
-              Container(
-                child: Image.file(_image)
-              ),
+              Container(child: Image.file(_image)),
               Container(
                 child: Column(
                     children: _recognitions.map((res) {
                   if (res["confidence"] > 0.5) {
-                    return Text(
-                      "${res["label"]}: ${res["confidence"].toString()}",
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 20.0,
-                        background: Paint()..color = Colors.white,
-                      ),
-                    );
+                    userModel.setFileName(res["label"]);
+                    userModel.setNutrition();
+                    return Padding(
+                        padding: EdgeInsets.all(20.0),
+                        child: new Text(
+                          "${res["label"]}: ${res["confidence"].toStringAsFixed(3)}",
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 20.0,
+                            background: Paint()..color = Colors.white,
+                          ),
+                        ));
                   } else
                     return Text("");
                 }).toList()),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Container(
+                    child: new FloatingActionButton(
+                      onPressed: () {
+                        Navigator.popAndPushNamed(context, "foodpage");
+                      },
+                      tooltip: 'Accept',
+                      child: Icon(Icons.check),
+                      mini: true,
+                      heroTag: "btnAccept",
+                    ),
+                  ),
+                  Container(
+                    child: new FloatingActionButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      tooltip: 'Decline',
+                      child: Icon(Icons.close),
+                      mini: true,
+                      heroTag: "btnDecline",
+                    ),
+                  )
+                ],
               )
             ],
+          );
+        });
+  }
+
+  Future<Null> _askWeight() async {
+    await showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return SimpleDialog(
+            contentPadding: EdgeInsets.all(15.0),
+            children: <Widget>[Center(child: CircularProgressIndicator(
+            ))],
           );
         });
   }
@@ -214,16 +211,16 @@ class _HomePageState extends State<HomePage> {
                 )),
             Expanded(
                 flex: 6,
-                child: StreamBuilder(
+                child: new StreamBuilder(
                     stream: userModel.getDailyFoodList().asStream(),
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting)
                         return Center(child: CircularProgressIndicator());
                       else {
-                        return ListView.builder(
+                        return new ListView.builder(
                             itemCount: snapshot.data.length,
                             itemBuilder: (context, index) {
-                              return ListTile(
+                              return new ListTile(
                                 leading: new Container(
                                     width: 50.0,
                                     height: 50.0,

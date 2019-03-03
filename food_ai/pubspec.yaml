@@ -26,6 +26,7 @@ dependencies:
   firebase_storage: ^1.0.4
   animated_floatactionbuttons: ^0.1.0
   tflite: ^1.0.1
+  url_launcher: ^3.0.3
   rxdart: 
 
   # The following adds the Cupertino Icons font to your application.
@@ -51,6 +52,11 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
    - assets/logo.png
+   - assets/calorie.png
+   - assets/carb.png
+   - assets/fat.png
+   - assets/info.png
+   - assets/protein.png
    - assets/optimized_graph.tflite
    - assets/retrained_labels.txt
   #  - images/a_dot_ham.jpeg

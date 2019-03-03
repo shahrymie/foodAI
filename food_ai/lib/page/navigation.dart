@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:food_ai/model/model.dart';
+import 'package:food_ai/page/foodinfo.dart';
 import 'about.dart';
 import 'history.dart';
 import 'home.dart';
@@ -12,7 +13,7 @@ class NavPage extends StatefulWidget {
 
 class NavPageState extends State<NavPage> {
   int _selectedPage = 0;
-  final _pageOption = [HomePage(), HistoryPage(), ProfilePage(), AboutPage()];
+  final _pageOption = [HomePage(), HistoryPage(), ProfilePage(), AboutPage(), FoodPage()];
   @override
   void initState() {
     super.initState();
