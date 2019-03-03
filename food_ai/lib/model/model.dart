@@ -10,19 +10,17 @@ class Model {
       _username,
       _email,
       _photo,
-      _gender,
       _date,
       _filename;   
-  List<dynamic> foodInfo = List<dynamic>(7);
-  num _age, _height, _weight;
-  double _bmr,_cal;
+  List<dynamic> _foodInfo = List<dynamic>(7);
+  List<dynamic> _profile = List<dynamic>(6);
   File _image;
   var _downUrl; 
   CollectionReference _profileRef, _dailyFoodRef;
   DocumentReference _userRef;
   Map<String, dynamic> dailyFood;
 
-  void setUser(String id, String name, String email, String photo) async {
+  setUser(String id, String name, String email, String photo) async {
     this._uid = id;
     this._username = name;
     this._email = email;
@@ -38,57 +36,42 @@ class Model {
         .collection('daily food');
   }
 
-  void setPid(String pid) async {
+  setPid(String pid) async {
     this._pid = pid;
   }
 
-  void setDfid(String dpid) async {
+  setDfid(String dpid) async {
     this._dfid = dpid;
   }
 
-  void setGender(String gender) async {
-    this._gender = gender;
-    _profileRef.document(this._pid).updateData({'Gender': gender});
-  }
-
-  void setAge(num age) async {
-    this._age = age;
-    _profileRef.document(this._pid).updateData({'Age': age});
-  }
-
-  void setHeight(num height) async {
-    this._height = height;
-    _profileRef.document(this._pid).updateData({'Height': height});
-  }
-
-  void setWeight(num weight) async {
-    this._weight = weight;
-    _profileRef.document(this._pid).updateData({'Weight': weight});
+  setProfile(dynamic data, int index, String type) async{
+    this._profile[index] = data;
+    _profileRef.document(this._pid).updateData({type: data});
   }
 
   setFileName(String filename) {
     this._filename = filename;
   }
 
-  void setBMR() async {
-    if (this._gender == "Male") {
-      this._bmr =
-          (10 * this._weight) + (6.25 * this._height) - (5 * this._age) + 5;
-    } else if (this._gender == "Female") {
-      this._bmr =
-          (10 * this._weight) + (6.25 * this._height) - (5 * this._age) - 161;
+  setBMR() async {
+    if (_profile[3] == "Male") {
+      _profile[1] =
+          (10 * _profile[5] ) + (6.25 * _profile[4] ) - (5 * _profile[0] ) + 5;
+    } else if (_profile[3] == "Female") {
+      _profile[1] =
+          (10 * _profile[5] ) + (6.25 * _profile[4] ) - (5 * _profile[0] ) - 161;
     }
-    _profileRef.document(this._pid).updateData({'BMR': this._bmr});
+    _profileRef.document(this._pid).updateData({'BMR': _profile[1] });
   }
 
-  void setProfile() async {
+  initProfile() async {
     _profileRef.getDocuments().then((onValue) {
-      this._gender = onValue.documents[0].data['Gender'];
-      this._age = onValue.documents[0].data['Age'];
-      this._height = onValue.documents[0].data['Height'];
-      this._weight = onValue.documents[0].data['Weight'];
-      this._bmr = onValue.documents[0].data['BMR'];
-      this._cal = onValue.documents[0].data['Cal'];
+      this._profile[3] = onValue.documents[0].data['Gender'];
+      this._profile[0] = onValue.documents[0].data['Age'];
+      this._profile[4] = onValue.documents[0].data['Height'];
+      this._profile[5] = onValue.documents[0].data['Weight'];
+      this._profile[1] = onValue.documents[0].data['BMR'];
+      this._profile[2] = onValue.documents[0].data['Cal'];
     });
   }
 
@@ -98,26 +81,26 @@ class Model {
         .document(userModel.getFileName())
         .get()
         .then((onValue) {
-      this.foodInfo[0] = onValue.data["Name"];
-      this.foodInfo[1] = onValue.data["Serving"];
-      this.foodInfo[2] = onValue.data["Calorie"];
-      this.foodInfo[3] = onValue.data["Carb"];
-      this.foodInfo[4] = onValue.data["Fat"];
-      this.foodInfo[5] = onValue.data["Protein"];
-      this.foodInfo[6] = onValue.data["Reference"];
+      this._foodInfo[0] = onValue.data["Name"];
+      this._foodInfo[1] = onValue.data["Serving"];
+      this._foodInfo[2] = onValue.data["Calorie"];
+      this._foodInfo[3] = onValue.data["Carb"];
+      this._foodInfo[4] = onValue.data["Fat"];
+      this._foodInfo[5] = onValue.data["Protein"];
+      this._foodInfo[6] = onValue.data["Reference"];
     }).whenComplete(() {
       print('set done');
     });
   }
 
   void updateCal(num cal) async {
-    if (getDate() == '0.00') this._cal = 0;
-    else this._cal = this._cal+cal;
-    _profileRef.document(this._pid).updateData({'Cal': this._cal});
+    if (getDate() == '0.00') this._profile[2] = 0.0;
+    else this._profile[2] = this._profile[2]+cal;
+    _profileRef.document(this._pid).updateData({'Cal': this._profile[2]});
   }
 
-  double getCal(){
-    return this._cal;
+  dynamic getProfile(int index){
+    return _profile[index];
   }
 
   getId() {
@@ -144,28 +127,8 @@ class Model {
     return this._photo;
   }
 
-  getGender() {
-    return this._gender;
-  }
-
-  getAge() {
-    return this._age;
-  }
-
-  getHeight() {
-    return this._height;
-  }
-
-  getWeight() {
-    return this._weight;
-  }
-
-  double getBMR() {
-    return this._bmr;
-  }
-
   double getDailyCalorie() {
-    return this._bmr - this._cal;
+    return _profile[1]- _profile[2];
   }
 
   File getImage() {
@@ -232,7 +195,7 @@ class Model {
   }
 
   getNutrition(int index) {
-    return foodInfo[index];
+    return _foodInfo[index];
   }
 }
 

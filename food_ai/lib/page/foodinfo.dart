@@ -37,7 +37,7 @@ class _FoodPageState extends State<FoodPage> {
                       child: Padding(
                         padding: EdgeInsets.fromLTRB(20, 15, 20, 0),
                         child: Text(
-                          userModel.getNutritionList()[0].toString(),
+                          userModel.getNutrition(0).toString(),
                           textAlign: TextAlign.left,
                         ),
                       ),

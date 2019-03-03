@@ -24,7 +24,7 @@ class _HomePageState extends State<HomePage> {
       <CircularSegmentEntry>[
         new CircularSegmentEntry(userModel.getDailyCalorie(), Colors.greenAccent,
             rankKey: 'Calorie'),
-        new CircularSegmentEntry(userModel.getCal(), Colors.grey)
+        new CircularSegmentEntry(userModel.getProfile(2), Colors.grey)
       ],
     )
   ];
@@ -66,7 +66,7 @@ class _HomePageState extends State<HomePage> {
       new CircularStackEntry(
         <CircularSegmentEntry>[
           new CircularSegmentEntry(userModel.getDailyCalorie(), Colors.greenAccent),
-          new CircularSegmentEntry(userModel.getCal(), Colors.white)
+          new CircularSegmentEntry(userModel.getProfile(2), Colors.white)
         ],
       )
     ];

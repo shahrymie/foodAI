@@ -20,7 +20,7 @@ class _ProfilePageState extends State<ProfilePage> {
               TextField(
                   onChanged: (input) {
                     setState(() {
-                      userModel.setAge(num.parse(input));
+                      userModel.setProfile(num.parse(input),0,"Age");
                     });
                   },
                   decoration:
@@ -49,7 +49,7 @@ class _ProfilePageState extends State<ProfilePage> {
               TextField(
                   onChanged: (input) {
                     setState(() {
-                      userModel.setHeight(num.parse(input));
+                      userModel.setProfile(num.parse(input),4,"Height");
                     });
                   },
                   decoration:
@@ -78,7 +78,7 @@ class _ProfilePageState extends State<ProfilePage> {
               TextField(
                   onChanged: (input) {
                     setState(() {
-                      userModel.setWeight(num.parse(input));
+                      userModel.setProfile(num.parse(input),5,"Weight");
                     });
                   },
                   decoration:
@@ -114,10 +114,10 @@ class _ProfilePageState extends State<ProfilePage> {
                   }).toList(),
                   onChanged: (String newValueSelected) {
                     setState(() {
-                      userModel.setGender(newValueSelected);
+                      userModel.setProfile(newValueSelected,3,"Gender");
                     });
                   },
-                  value: userModel.getGender()),
+                  value: userModel.getProfile(3)),
               RaisedButton(
                 onPressed: () {
                   userModel.setBMR();
@@ -177,25 +177,25 @@ class _ProfilePageState extends State<ProfilePage> {
               children: <Widget>[
                 ListTile(
                   title: Text('Gender'),
-                  subtitle: Text(userModel.getGender()),
+                  subtitle: Text(userModel.getProfile(3)),
                   trailing: Icon(Icons.edit),
                   onTap: _askGender,
                 ),
                 ListTile(
                   title: Text('Age'),
-                  subtitle: Text(userModel.getAge().toString()),
+                  subtitle: Text(userModel.getProfile(0).toString()),
                   trailing: Icon(Icons.edit),
                   onTap: _askAge,
                 ),
                 ListTile(
                   title: Text('Height'),
-                  subtitle: Text(userModel.getHeight().toString()),
+                  subtitle: Text(userModel.getProfile(4).toString()),
                   trailing: Icon(Icons.edit),
                   onTap: _askHeight,
                 ),
                 ListTile(
                   title: Text('Weight'),
-                  subtitle: Text(userModel.getWeight().toString()),
+                  subtitle: Text(userModel.getProfile(5).toString()),
                   trailing: Icon(Icons.edit),
                   onTap: _askWeight,
                 ),

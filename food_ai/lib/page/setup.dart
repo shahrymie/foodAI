@@ -53,16 +53,16 @@ class _SetupPageState extends State<SetupPage> {
                       }).toList(),
                       onChanged: (String newValueSelected) {
                         setState(() {
-                          userModel.setGender(newValueSelected);
+                          userModel.setProfile(newValueSelected,3,"Gender");
                         });
                       },
-                      value: userModel.getGender(),)),
+                      value: userModel.getProfile(3),)),
               Padding(
                 padding: EdgeInsets.fromLTRB(25.0, 0.0, 25.0, 15.0),
                 child: TextField(
                     onChanged: (input) {
                       setState(() {
-                        userModel.setAge(num.parse(input));
+                        userModel.setProfile(num.parse(input),0,"Age");
                       });
                     },
                     decoration:
@@ -74,7 +74,7 @@ class _SetupPageState extends State<SetupPage> {
                 child: TextField(
                     onChanged: (input) {
                       setState(() {
-                        userModel.setHeight(num.parse(input));
+                        userModel.setProfile(num.parse(input),4,"Height");
                       });
                     },
                     decoration:
@@ -86,7 +86,7 @@ class _SetupPageState extends State<SetupPage> {
                 child: TextField(
                     onChanged: (input) {
                       setState(() {
-                        userModel.setWeight(num.parse(input));
+                        userModel.setProfile(num.parse(input),5,"Weight");
                       });
                     },
                     decoration:
