@@ -50,7 +50,6 @@ class Model {
 
   setId(int index, String id) async {
     _id[index] = id;
-    print("id: " + _id.toList().toString());
   }
 
   setProfile(dynamic data, int index, String type) async {
@@ -73,7 +72,6 @@ class Model {
       _profile[2] = onValue.documents[0].data['Cal'];
       _id[1] = onValue.documents[0].documentID;
     });
-    print("idinit: " + _id.toList().toString());
   }
 
   setBMR() async {
@@ -88,15 +86,8 @@ class Model {
   }
 
   void updateCal(num cal) async {
-    if (getDate() == '0.00')
-      _profile[2] = 0.0;
-    else
-      _profile[2] = _profile[2] + cal.toDouble();
+    _profile[2] = _profile[2] + cal.toDouble();
     _profileRef.document(_id[1]).updateData({'Cal': _profile[2]});
-  }
-
-  double getDailyCalorie() {
-    return _profile[1] - _profile[2];
   }
 
   Future getCamera() async {
@@ -119,16 +110,22 @@ class Model {
       'Name': getNutrition(0),
       'ID': _id[3],
       'Serving': serving,
-      'Cal': getNutrition(1)*serving
+      'Cal': getNutrition(1) * serving
     };
     _dailyFoodRef.add(dailyFood).then((onValue) {
       _id[2] = onValue.documentID;
     });
   }
 
+  Future deleteDailyFood() async {
+    _dailyFoodRef.document(_id[2]).delete();
+  }
+
   Future updateInfo(int serving) async {
     _dailyFoodRef.document(_id[2]).updateData({'Serving': serving});
-    _dailyFoodRef.document(_id[2]).updateData({'Cal': getNutrition(1) * serving});
+    _dailyFoodRef
+        .document(_id[2])
+        .updateData({'Cal': getNutrition(1) * serving});
   }
 
   Future getDailyFoodList() async {
@@ -137,13 +134,12 @@ class Model {
   }
 
   getServing() {
-    _dailyFoodRef.document(_id[2]).get().then((onValue){
+    _dailyFoodRef.document(_id[2]).get().then((onValue) {
       _serving = onValue.data['Serving'];
-      print("serve home " + _serving.toString());
     });
   }
 
-  getserve(){
+  getserve() {
     return _serving;
   }
 
@@ -155,8 +151,6 @@ class Model {
       _foodInfo[3] = onValue.data["Fat"];
       _foodInfo[4] = onValue.data["Protein"];
       _foodInfo[5] = onValue.data["Reference"];
-    }).whenComplete(() {
-      print('set done');
     });
   }
 
@@ -192,3 +186,5 @@ class Model {
 }
 
 Model userModel = new Model();
+
+

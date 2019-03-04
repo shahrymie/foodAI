@@ -5,6 +5,7 @@ import 'package:flutter_circular_chart/flutter_circular_chart.dart';
 import 'package:food_ai/model/model.dart';
 
 import 'package:animated_floatactionbuttons/animated_floatactionbuttons.dart';
+import 'package:food_ai/page/navigation.dart';
 import 'package:tflite/tflite.dart';
 
 class HomePage extends StatefulWidget {
@@ -146,6 +147,23 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    List<CircularStackEntry> _data = <CircularStackEntry>[
+      new CircularStackEntry(
+        <CircularSegmentEntry>[
+          new CircularSegmentEntry(
+              (userModel.getProfile(1) - userModel.getProfile(2)),
+              Colors.lightGreen[900],
+              rankKey: 'Current'),
+          new CircularSegmentEntry(
+            userModel.getProfile(2),
+            Colors.grey,
+            rankKey: 'Remaining',
+          ),
+        ],
+        rankKey: 'Calorie',
+      ),
+    ];
+
     return Scaffold(
       appBar: new AppBar(
         automaticallyImplyLeading: false,
@@ -155,7 +173,7 @@ class _HomePageState extends State<HomePage> {
             padding: EdgeInsets.only(right: 20.0),
             icon: new Icon(Icons.exit_to_app),
             onPressed: () {
-              Navigator.popAndPushNamed(context, "loginpage");
+              Navigator.pop(context);
               authService.signOut();
             },
           )
@@ -170,24 +188,12 @@ class _HomePageState extends State<HomePage> {
                 child: new AnimatedCircularChart(
                   key: _chartKey,
                   size: const Size(180.0, 180.0),
-                  initialChartData: <CircularStackEntry>[
-                    new CircularStackEntry(
-                      <CircularSegmentEntry>[
-                        new CircularSegmentEntry(
-                            userModel.getDailyCalorie().toDouble(),
-                            Colors.lightGreen[900],
-                            rankKey: 'Calorie'),
-                        new CircularSegmentEntry(
-                          userModel.getProfile(2).toDouble(),
-                          Colors.grey,
-                          rankKey: 'Remaining',
-                        ),
-                      ],
-                    ),
-                  ],
+                  initialChartData: _data,
                   chartType: CircularChartType.Radial,
                   edgeStyle: SegmentEdgeStyle.round,
-                  holeLabel: userModel.getDailyCalorie().toString() + ' Cal',
+                  holeLabel: (userModel.getProfile(1) - userModel.getProfile(2))
+                          .toString() +
+                      ' Cal',
                   holeRadius: 40.0,
                 )),
             Expanded(
