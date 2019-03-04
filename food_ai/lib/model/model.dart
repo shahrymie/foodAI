@@ -9,12 +9,13 @@ class Model {
       List<String>(4); //userID, profileID, dailyFoodID, nutritionID
   List<String> _user = List<String>(3); //Name, Email, Photo
   List<dynamic> _foodInfo =
-      List<dynamic>(7); //Name, Serving, Calorie, Carb, Fat, Protein, Reference
+      List<dynamic>(6); //Name, Calorie, Carb, Fat, Protein, Reference
   List<dynamic> _profile =
       List<dynamic>(6); //Age, BMR, Cal, Gender, Height, Weight
   File _image;
   var _downUrl;
   bool _foodPageState;
+  num _serving;
   CollectionReference _profileRef, _dailyFoodRef;
   CollectionReference _nutritionRef;
   Map<String, dynamic> dailyFood;
@@ -112,17 +113,22 @@ class Model {
     _downUrl = await (await upload.onComplete).ref.getDownloadURL();
   }
 
-  Future setDailyFood() async {
+  Future setDailyFood(int serving) async {
     Map<String, dynamic> dailyFood = {
       'Photo': _downUrl.toString(),
       'Name': getNutrition(0),
       'ID': _id[3],
-      'Serving': 1,
-      'Cal': getNutrition(2)
+      'Serving': serving,
+      'Cal': getNutrition(1)*serving
     };
     _dailyFoodRef.add(dailyFood).then((onValue) {
       _id[2] = onValue.documentID;
     });
+  }
+
+  Future updateInfo(int serving) async {
+    _dailyFoodRef.document(_id[2]).updateData({'Serving': serving});
+    _dailyFoodRef.document(_id[2]).updateData({'Cal': getNutrition(1) * serving});
   }
 
   Future getDailyFoodList() async {
@@ -130,15 +136,25 @@ class Model {
     return _qn.documents;
   }
 
+  getServing() {
+    _dailyFoodRef.document(_id[2]).get().then((onValue){
+      _serving = onValue.data['Serving'];
+      print("serve home " + _serving.toString());
+    });
+  }
+
+  getserve(){
+    return _serving;
+  }
+
   setNutrition() {
     _nutritionRef.document(_id[3]).get().then((onValue) {
       _foodInfo[0] = onValue.data["Name"];
-      _foodInfo[1] = onValue.data["Serving"];
-      _foodInfo[2] = onValue.data["Calorie"];
-      _foodInfo[3] = onValue.data["Carb"];
-      _foodInfo[4] = onValue.data["Fat"];
-      _foodInfo[5] = onValue.data["Protein"];
-      _foodInfo[6] = onValue.data["Reference"];
+      _foodInfo[1] = onValue.data["Calorie"];
+      _foodInfo[2] = onValue.data["Carb"];
+      _foodInfo[3] = onValue.data["Fat"];
+      _foodInfo[4] = onValue.data["Protein"];
+      _foodInfo[5] = onValue.data["Reference"];
     }).whenComplete(() {
       print('set done');
     });

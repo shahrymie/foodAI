@@ -8,6 +8,17 @@ class FoodPage extends StatefulWidget {
 }
 
 class _FoodPageState extends State<FoodPage> {
+  int _serving = 1;
+
+  @override
+  void initState() {
+    super.initState();
+    setState(() {
+      userModel.getFoodState() ? _serving = 1 : _serving = userModel.getserve();
+    });
+    print(_serving);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -54,7 +65,8 @@ class _FoodPageState extends State<FoodPage> {
                         child: Padding(
                           padding: EdgeInsets.fromLTRB(20, 15, 20, 0),
                           child: Text(
-                            userModel.getNutrition(2).toString() + " Cal",
+                            (userModel.getNutrition(1) * _serving).toString() +
+                                " Cal",
                             textAlign: TextAlign.left,
                           ),
                         ),
@@ -70,6 +82,33 @@ class _FoodPageState extends State<FoodPage> {
                   ListTile(
                     contentPadding: EdgeInsets.only(top: 15),
                     leading: new Container(
+                        child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        IconButton(
+                          icon: Icon(Icons.remove),
+                          onPressed: () {
+                            setState(() {
+                              _serving--;
+                            });
+                          },
+                        ),
+                        Text(_serving.toString()),
+                        IconButton(
+                          icon: Icon(Icons.add),
+                          onPressed: () {
+                            setState(() {
+                              _serving++;
+                            });
+                          },
+                        ),
+                      ],
+                    )),
+                    title: Text('Serving'),
+                  ),
+                  ListTile(
+                    contentPadding: EdgeInsets.only(top: 15),
+                    leading: new Container(
                         width: 40.0,
                         height: 40.0,
                         decoration: new BoxDecoration(
@@ -79,7 +118,9 @@ class _FoodPageState extends State<FoodPage> {
                                 image: new AssetImage("assets/carb.png")),
                             color: Colors.yellowAccent)),
                     title: Text('Carbohydrates'),
-                    trailing: Text(userModel.getNutrition(3).toString() + " g"),
+                    trailing: Text(
+                        (userModel.getNutrition(2) * _serving).toString() +
+                            " g"),
                   ),
                   ListTile(
                     contentPadding: EdgeInsets.only(top: 15),
@@ -93,7 +134,9 @@ class _FoodPageState extends State<FoodPage> {
                                 image: new AssetImage("assets/fat.png")),
                             color: Colors.orangeAccent)),
                     title: Text('Fats'),
-                    trailing: Text(userModel.getNutrition(4).toString() + " g"),
+                    trailing: Text(
+                        (userModel.getNutrition(3) * _serving).toString() +
+                            " g"),
                   ),
                   ListTile(
                     contentPadding: EdgeInsets.only(top: 15),
@@ -107,7 +150,9 @@ class _FoodPageState extends State<FoodPage> {
                                 image: new AssetImage("assets/protein.png")),
                             color: Colors.white70)),
                     title: Text('Protein'),
-                    trailing: Text(userModel.getNutrition(5).toString() + " g"),
+                    trailing: Text(
+                        (userModel.getNutrition(4) * _serving).toString() +
+                            " g"),
                   ),
                   ListTile(
                     contentPadding: EdgeInsets.only(top: 15),
@@ -122,11 +167,11 @@ class _FoodPageState extends State<FoodPage> {
                             color: Colors.blueAccent)),
                     title: Text('Reference'),
                     subtitle: InkWell(
-                      child: Text(userModel.getNutrition(6).toString()),
+                      child: Text(userModel.getNutrition(5).toString()),
                       onTap: () async {
                         if (await canLaunch(
-                            userModel.getNutrition(6).toString())) {
-                          await launch(userModel.getNutrition(6).toString());
+                            userModel.getNutrition(5).toString())) {
+                          await launch(userModel.getNutrition(5).toString());
                         }
                       },
                     ),
@@ -139,8 +184,7 @@ class _FoodPageState extends State<FoodPage> {
         floatingActionButton: userModel.getFoodState()
             ? FloatingActionButton(
                 onPressed: () {
-                  userModel.setDailyFood();
-                  userModel.updateCal(userModel.getNutrition(2));
+                  userModel.setDailyFood(_serving);
                   Navigator.pop(context);
                 },
                 tooltip: 'Add',
@@ -149,6 +193,7 @@ class _FoodPageState extends State<FoodPage> {
               )
             : FloatingActionButton(
                 onPressed: () {
+                  userModel.updateInfo(_serving);
                   Navigator.pop(context);
                 },
                 tooltip: 'Save',

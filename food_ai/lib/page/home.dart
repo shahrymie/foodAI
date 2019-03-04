@@ -223,9 +223,12 @@ class _HomePageState extends State<HomePage> {
                                 onTap: () async {
                                   userModel.setId(
                                       3, snapshot.data[index].data['ID']);
+                                  userModel.setId(
+                                      2, snapshot.data[index].documentID);
                                   userModel.setNutrition();
                                   userModel.setUrl(
                                       snapshot.data[index].data['Photo']);
+                                  userModel.getServing();
                                   userModel.setFoodState(false);
                                   await new Future.delayed(
                                       const Duration(seconds: 1));
