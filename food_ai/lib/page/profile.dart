@@ -20,7 +20,7 @@ class _ProfilePageState extends State<ProfilePage> {
               TextField(
                   onChanged: (input) {
                     setState(() {
-                      userModel.setProfile(num.parse(input),0,"Age");
+                      userModel.setProfile(num.parse(input), 0, "Age");
                     });
                   },
                   decoration:
@@ -49,7 +49,7 @@ class _ProfilePageState extends State<ProfilePage> {
               TextField(
                   onChanged: (input) {
                     setState(() {
-                      userModel.setProfile(num.parse(input),4,"Height");
+                      userModel.setProfile(num.parse(input), 4, "Height");
                     });
                   },
                   decoration:
@@ -78,7 +78,7 @@ class _ProfilePageState extends State<ProfilePage> {
               TextField(
                   onChanged: (input) {
                     setState(() {
-                      userModel.setProfile(num.parse(input),5,"Weight");
+                      userModel.setProfile(num.parse(input), 5, "Weight");
                     });
                   },
                   decoration:
@@ -114,7 +114,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   }).toList(),
                   onChanged: (String newValueSelected) {
                     setState(() {
-                      userModel.setProfile(newValueSelected,3,"Gender");
+                      userModel.setProfile(newValueSelected, 3, "Gender");
                     });
                   },
                   value: userModel.getProfile(3)),
@@ -144,28 +144,32 @@ class _ProfilePageState extends State<ProfilePage> {
           children: <Widget>[
             Row(
               children: <Widget>[
-                ClipOval(
-                  child: Image.network(
-                    userModel.getPhoto(),
-                    height: 100,
-                    width: 100,
-                    fit: BoxFit.cover,
-                  ),
-                ),
+                Container(
+                    width: 100.0,
+                    height: 100.0,
+                    decoration: new BoxDecoration(
+                        border: Border.all(
+                          color: Colors.black,
+                          width: 2.5,
+                        ),
+                        shape: BoxShape.circle,
+                        image: new DecorationImage(
+                            fit: BoxFit.fill,
+                            image: new NetworkImage(userModel.getUser(2))))),
                 Column(
                   children: <Widget>[
                     SizedBox(
                       child: Padding(
                         padding: EdgeInsets.fromLTRB(20, 15, 20, 0),
                         child: Text(
-                          userModel.getUserName(),
+                          userModel.getUser(0),
                           textAlign: TextAlign.left,
                         ),
                       ),
                     ),
                     Padding(
                         padding: EdgeInsets.fromLTRB(20, 15, 20, 0),
-                        child: Text(userModel.getEmail(),
+                        child: Text(userModel.getUser(1),
                             textAlign: TextAlign.right)),
                   ],
                 ),

@@ -17,24 +17,35 @@ class NavPageState extends State<NavPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: _pageOption[_selectedPage],
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedPage,
-        type: BottomNavigationBarType.fixed,
-        fixedColor: Colors.blue,
-        items: <BottomNavigationBarItem>[
-          BottomNavigationBarItem(icon: Icon(Icons.home), title: Text("Home")),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.insert_invitation), title: Text("History")),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.people), title: Text("Profiles")),
-          BottomNavigationBarItem(icon: Icon(Icons.info), title: Text("About")),
-        ],
-        onTap: (int index) {
-          setState(() {
-            _selectedPage = index;
-          });
-        },
-      ),
+      bottomNavigationBar: new Theme(
+          data: Theme.of(context).copyWith(
+              // sets the background color of the `BottomNavigationBar`
+              canvasColor: Colors.yellow[900],
+              
+              textTheme: Theme.of(context).textTheme.copyWith(
+                  caption: new TextStyle(
+                      color: Colors
+                          .white))), // sets the inactive color of the `BottomNavigationBar`
+          child: new BottomNavigationBar(
+            currentIndex: _selectedPage,
+            type: BottomNavigationBarType.fixed,
+            fixedColor: Colors.black,
+            items: <BottomNavigationBarItem>[
+              BottomNavigationBarItem(
+                  icon: Icon(Icons.home), title: Text("Home")),
+              BottomNavigationBarItem(
+                  icon: Icon(Icons.insert_invitation), title: Text("History")),
+              BottomNavigationBarItem(
+                  icon: Icon(Icons.people), title: Text("Profiles")),
+              BottomNavigationBarItem(
+                  icon: Icon(Icons.info), title: Text("About")),
+            ],
+            onTap: (int index) {
+              setState(() {
+                _selectedPage = index;
+              });
+            },
+          )),
     );
   }
 }

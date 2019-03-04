@@ -23,7 +23,8 @@ class _SetupPageState extends State<SetupPage> {
     userModel.getProfileRef().add(profile);
     userModel.getProfileRef().getDocuments().then((onValue) {
       setState(() {
-        userModel.setPid(onValue.documents[0].documentID);
+        userModel.setId(1 , (onValue.documents[0].documentID));
+        userModel.setProfile(0.0, 2, 'Cal');
       });
     });
   }

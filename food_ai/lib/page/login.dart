@@ -32,7 +32,7 @@ class _LoginPageState extends State<LoginPage> {
               setState(() {
                 userModel.setUser(
                     user.uid, user.displayName, user.email, user.photoUrl);
-                    userModel.initProfile();
+                userModel.initProfile();
                 userModel.getProfileRef().getDocuments().then((datasnapshot) {
                   if (datasnapshot.documents.isNotEmpty)
                     Navigator.popAndPushNamed(context, "navpage");

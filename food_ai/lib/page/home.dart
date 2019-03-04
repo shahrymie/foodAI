@@ -19,22 +19,12 @@ class _HomePageState extends State<HomePage> {
   final GlobalKey<AnimatedCircularChartState> _chartKey =
       new GlobalKey<AnimatedCircularChartState>();
 
-  List<CircularStackEntry> data = <CircularStackEntry>[
-    new CircularStackEntry(
-      <CircularSegmentEntry>[
-        new CircularSegmentEntry(userModel.getDailyCalorie(), Colors.greenAccent,
-            rankKey: 'Calorie'),
-        new CircularSegmentEntry(userModel.getProfile(2), Colors.grey)
-      ],
-    )
-  ];
-
   Widget gallery() {
     return Container(
       child: new FloatingActionButton(
         onPressed: () {
           userModel.getGallery().whenComplete(() {
-            imgRec();
+            if (userModel.getImage() != null) imgRec();
           });
         },
         tooltip: 'Gallery',
@@ -59,20 +49,6 @@ class _HomePageState extends State<HomePage> {
         heroTag: "btnCamera",
       ),
     );
-  }
-
-  void _incrementCounter() {
-    List<CircularStackEntry> nextData = <CircularStackEntry>[
-      new CircularStackEntry(
-        <CircularSegmentEntry>[
-          new CircularSegmentEntry(userModel.getDailyCalorie(), Colors.greenAccent),
-          new CircularSegmentEntry(userModel.getProfile(2), Colors.white)
-        ],
-      )
-    ];
-    setState(() {
-      _chartKey.currentState.updateData(nextData);
-    });
   }
 
   Future loadModel() async {
@@ -118,9 +94,9 @@ class _HomePageState extends State<HomePage> {
                 child: Column(
                     children: _recognitions.map((res) {
                   if (res["confidence"] > 0.5) {
-                    userModel.setFileName(res["label"]);
+                    userModel.setId(3, res["label"]);
                     userModel.setNutrition();
-                    userModel.uploadImage();
+                    userModel.uploadImage(res["label"]);
                     return Padding(
                         padding: EdgeInsets.all(20.0),
                         child: new Text(
@@ -141,6 +117,7 @@ class _HomePageState extends State<HomePage> {
                   Container(
                     child: new FloatingActionButton(
                       onPressed: () {
+                        userModel.setFoodState(true);
                         Navigator.popAndPushNamed(context, "foodpage");
                       },
                       tooltip: 'Accept',
@@ -178,8 +155,8 @@ class _HomePageState extends State<HomePage> {
             padding: EdgeInsets.only(right: 20.0),
             icon: new Icon(Icons.exit_to_app),
             onPressed: () {
-              authService.signOut();
               Navigator.popAndPushNamed(context, "loginpage");
+              authService.signOut();
             },
           )
         ],
@@ -190,11 +167,26 @@ class _HomePageState extends State<HomePage> {
           children: <Widget>[
             Expanded(
                 flex: 4,
-                child: AnimatedCircularChart(
+                child: new AnimatedCircularChart(
                   key: _chartKey,
                   size: const Size(180.0, 180.0),
-                  initialChartData: data,
+                  initialChartData: <CircularStackEntry>[
+                    new CircularStackEntry(
+                      <CircularSegmentEntry>[
+                        new CircularSegmentEntry(
+                            userModel.getDailyCalorie().toDouble(),
+                            Colors.lightGreen[900],
+                            rankKey: 'Calorie'),
+                        new CircularSegmentEntry(
+                          userModel.getProfile(2).toDouble(),
+                          Colors.grey,
+                          rankKey: 'Remaining',
+                        ),
+                      ],
+                    ),
+                  ],
                   chartType: CircularChartType.Radial,
+                  edgeStyle: SegmentEdgeStyle.round,
                   holeLabel: userModel.getDailyCalorie().toString() + ' Cal',
                   holeRadius: 40.0,
                 )),
@@ -211,17 +203,34 @@ class _HomePageState extends State<HomePage> {
                             itemBuilder: (context, index) {
                               return new ListTile(
                                 leading: new Container(
-                                    width: 50.0,
-                                    height: 50.0,
+                                    width: 55.0,
+                                    height: 55.0,
                                     decoration: new BoxDecoration(
+                                        border: Border.all(
+                                          color: Colors.black,
+                                          width: 1.5,
+                                        ),
                                         shape: BoxShape.circle,
                                         image: new DecorationImage(
                                             fit: BoxFit.fill,
                                             image: new NetworkImage(snapshot
                                                 .data[index].data['Photo'])))),
                                 title: Text(snapshot.data[index].data['Name']),
-                                subtitle: Text(snapshot.data[index].data['Cal'].toString()+" Cal"),
+                                subtitle: Text(snapshot.data[index].data['Cal']
+                                        .toString() +
+                                    " Cal"),
                                 trailing: Icon(Icons.info_outline),
+                                onTap: () async {
+                                  userModel.setId(
+                                      3, snapshot.data[index].data['ID']);
+                                  userModel.setNutrition();
+                                  userModel.setUrl(
+                                      snapshot.data[index].data['Photo']);
+                                  userModel.setFoodState(false);
+                                  await new Future.delayed(
+                                      const Duration(seconds: 1));
+                                  Navigator.pushNamed(context, "foodpage");
+                                },
                               );
                             });
                       }
@@ -231,8 +240,8 @@ class _HomePageState extends State<HomePage> {
       }),
       floatingActionButton: new AnimatedFloatingActionButton(
         fabButtons: <Widget>[camera(), gallery()],
-        colorStartAnimation: Colors.blue,
-        colorEndAnimation: Colors.red,
+        colorStartAnimation: Colors.lightGreen[900],
+        colorEndAnimation: Colors.red[900],
         animatedIconData: AnimatedIcons.menu_close,
       ),
     );
