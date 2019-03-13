@@ -18,20 +18,26 @@ class _LoginPageState extends State<LoginPage> {
                 child: Column(
       children: <Widget>[
         Container(
-          padding: EdgeInsets.fromLTRB(0, 0, 0, 20),
-        ),
+            width: 220.0,
+            height: 220.0,
+            decoration: new BoxDecoration(
+                border: Border.all(
+                  color: Colors.black,
+                  width: 2.5,
+                ),
+                shape: BoxShape.circle,
+                image: new DecorationImage(
+                    fit: BoxFit.fill,
+                    image: new AssetImage("assets/logo.png")))),
         Container(
-          padding: EdgeInsets.fromLTRB(0, 0, 0, 20),
-          child: new Image.asset("assets/logo.png"),
-        ),
-        Container(
-          padding: EdgeInsets.only(top: 30),
+          padding: EdgeInsets.only(top: 50),
           child: SignInButton(Buttons.Google, onPressed: () {
             authService.googleSignIn();
             FirebaseAuth.instance.currentUser().then((user) {
               setState(() {
                 userModel.setUser(
                     user.uid, user.displayName, user.email, user.photoUrl);
+
                 userModel.initProfile();
                 userModel.getProfileRef().getDocuments().then((datasnapshot) {
                   if (datasnapshot.documents.isNotEmpty)

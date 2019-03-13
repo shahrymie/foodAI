@@ -14,7 +14,7 @@ class _SetupPageState extends State<SetupPage> {
     'Height': null,
     'Weight': null,
     'BMR': null,
-    'Cal': 0.0,
+    'Cal': 0.0
   };
 
   @override
@@ -103,6 +103,7 @@ class _SetupPageState extends State<SetupPage> {
                       Navigator.popAndPushNamed(context, "navpage");
                     },
                     child: Text('Next'),
+                    shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0))
                   )),
             ],
           ),

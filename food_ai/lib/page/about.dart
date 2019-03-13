@@ -12,5 +12,4 @@ class AboutPage extends StatefulWidget {
     // TODO: implement build
     return null;
   }
-
 }

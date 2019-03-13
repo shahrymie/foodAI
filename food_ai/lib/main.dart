@@ -4,6 +4,7 @@ import 'package:food_ai/page/login.dart';
 import 'package:food_ai/page/navigation.dart';
 import 'package:food_ai/page/setup.dart';
 
+
 void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {

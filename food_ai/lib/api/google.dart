@@ -49,7 +49,7 @@ class Google {
       'email': user.email,
       'photoURL': user.photoUrl,
       'displayName': user.displayName,
-      'lastSeen': DateTime.now()
+      'lastSeen': DateTime.now(),
     }, merge: true);
   }
 

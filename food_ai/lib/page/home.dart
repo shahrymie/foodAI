@@ -1,11 +1,9 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:food_ai/api/google.dart';
-import 'package:flutter_circular_chart/flutter_circular_chart.dart';
 import 'package:food_ai/model/model.dart';
-
+import 'package:percent_indicator/percent_indicator.dart';
 import 'package:animated_floatactionbuttons/animated_floatactionbuttons.dart';
-import 'package:food_ai/page/navigation.dart';
 import 'package:tflite/tflite.dart';
 
 class HomePage extends StatefulWidget {
@@ -16,9 +14,6 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   File _image;
   List _recognitions;
-
-  final GlobalKey<AnimatedCircularChartState> _chartKey =
-      new GlobalKey<AnimatedCircularChartState>();
 
   Widget gallery() {
     return Container(
@@ -101,7 +96,7 @@ class _HomePageState extends State<HomePage> {
                     return Padding(
                         padding: EdgeInsets.all(20.0),
                         child: new Text(
-                          "${res["label"]}: ${res["confidence"].toStringAsFixed(3)}",
+                          "${res["label"]}: ${(res["confidence"] * 100).toStringAsFixed(0)}% Accuracy",
                           style: TextStyle(
                             color: Colors.black,
                             fontSize: 20.0,
@@ -118,6 +113,17 @@ class _HomePageState extends State<HomePage> {
                   Container(
                     child: new FloatingActionButton(
                       onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      tooltip: 'Decline',
+                      child: Icon(Icons.close),
+                      mini: true,
+                      heroTag: "btnDecline",
+                    ),
+                  ),
+                  Container(
+                    child: new FloatingActionButton(
+                      onPressed: () {
                         userModel.setFoodState(true);
                         Navigator.popAndPushNamed(context, "foodpage");
                       },
@@ -125,17 +131,6 @@ class _HomePageState extends State<HomePage> {
                       child: Icon(Icons.check),
                       mini: true,
                       heroTag: "btnAccept",
-                    ),
-                  ),
-                  Container(
-                    child: new FloatingActionButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      tooltip: 'Decline',
-                      child: Icon(Icons.close),
-                      mini: true,
-                      heroTag: "btnDecline",
                     ),
                   )
                 ],
@@ -147,23 +142,6 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    List<CircularStackEntry> _data = <CircularStackEntry>[
-      new CircularStackEntry(
-        <CircularSegmentEntry>[
-          new CircularSegmentEntry(
-              (userModel.getProfile(1) - userModel.getProfile(2)),
-              Colors.lightGreen[900],
-              rankKey: 'Current'),
-          new CircularSegmentEntry(
-            userModel.getProfile(2),
-            Colors.grey,
-            rankKey: 'Remaining',
-          ),
-        ],
-        rankKey: 'Calorie',
-      ),
-    ];
-
     return Scaffold(
       appBar: new AppBar(
         automaticallyImplyLeading: false,
@@ -184,18 +162,65 @@ class _HomePageState extends State<HomePage> {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: <Widget>[
             Expanded(
-                flex: 4,
-                child: new AnimatedCircularChart(
-                  key: _chartKey,
-                  size: const Size(180.0, 180.0),
-                  initialChartData: _data,
-                  chartType: CircularChartType.Radial,
-                  edgeStyle: SegmentEdgeStyle.round,
-                  holeLabel: (userModel.getProfile(1) - userModel.getProfile(2))
-                          .toString() +
-                      ' Cal',
-                  holeRadius: 40.0,
-                )),
+              flex: 4,
+              child: Padding(
+                  padding: EdgeInsets.all(15),
+                  child: Row(
+                    children: <Widget>[
+                      CircularPercentIndicator(
+                        radius: 130.0,
+                        animation: true,
+                        animationDuration: 900,
+                        lineWidth: 12.0,
+                        percent: (userModel.calConsumedCalorie()) < 0
+                            ? 0
+                            : userModel.calConsumedCalorie() /
+                                userModel.getProfile(1),
+                        center: new Container(
+                            width: 100.0,
+                            height: 100.0,
+                            decoration: new BoxDecoration(
+                                shape: BoxShape.circle,
+                                image: new DecorationImage(
+                                    fit: BoxFit.fill,
+                                    image:
+                                        new AssetImage("assets/calorie.png")),
+                                color: Colors.transparent)),
+                        circularStrokeCap: CircularStrokeCap.round,
+                        backgroundColor: Colors.grey,
+                        progressColor: Colors.lightGreen[900],
+                      ),
+                      Column(
+                        children: <Widget>[
+                          SizedBox(
+                            child: Padding(
+                              padding: EdgeInsets.fromLTRB(20, 40, 20, 0),
+                              child: Text(
+                                "User Daily Calorie Need: \n" +
+                                    userModel.getProfile(1).toStringAsFixed(0) +
+                                    " Cal",
+                                textAlign: TextAlign.right,
+                                textScaleFactor: 1,
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            child: Padding(
+                              padding: EdgeInsets.fromLTRB(20, 30, 20, 0),
+                              child: Text(
+                                "Daily Calorie Consumed: \n" +
+                                    userModel.getProfile(2).toStringAsFixed(0) +
+                                    " Cal",
+                                textAlign: TextAlign.right,
+                                textScaleFactor: 1,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  )),
+            ),
             Expanded(
                 flex: 6,
                 child: new StreamBuilder(

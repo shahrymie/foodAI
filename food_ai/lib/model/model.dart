@@ -4,14 +4,13 @@ import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
 class Model {
-  String _date;
   List<String> _id =
       List<String>(4); //userID, profileID, dailyFoodID, nutritionID
-  List<String> _user = List<String>(3); //Name, Email, Photo
+  List<dynamic> _user = List<dynamic>(3); //Name, Email, Photo
   List<dynamic> _foodInfo =
       List<dynamic>(6); //Name, Calorie, Carb, Fat, Protein, Reference
   List<dynamic> _profile =
-      List<dynamic>(6); //Age, BMR, Cal, Gender, Height, Weight
+      List<dynamic>(7); //Age, BMR, Cal, Gender, Height, Weight, Last seen
   File _image;
   var _downUrl;
   bool _foodPageState;
@@ -55,7 +54,6 @@ class Model {
   setProfile(dynamic data, int index, String type) async {
     _profile[index] = data;
     _profileRef.document(_id[1]).updateData({type: data});
-    print('profile data: ' + _profile.toList().toString());
   }
 
   dynamic getProfile(int index) {
@@ -90,12 +88,18 @@ class Model {
     _profileRef.document(_id[1]).updateData({'Cal': _profile[2]});
   }
 
+  double calConsumedCalorie() {
+    return _profile[1] - _profile[2];
+  }
+
   Future getCamera() async {
-    _image = await ImagePicker.pickImage(source: ImageSource.camera);
+    _image = await ImagePicker.pickImage(
+        source: ImageSource.camera, maxHeight: 224, maxWidth: 224);
   }
 
   Future getGallery() async {
-    _image = await ImagePicker.pickImage(source: ImageSource.gallery);
+    _image = await ImagePicker.pickImage(
+        source: ImageSource.gallery, maxHeight: 224, maxWidth: 224);
   }
 
   Future uploadImage(String id) async {
@@ -179,12 +183,9 @@ class Model {
   }
 
   getDate() {
-    this._date =
-        DateTime.now().hour.toString() + '.' + DateTime.now().minute.toString();
-    return _date;
+    return num.parse(
+        DateTime.now().month.toString() + "." + DateTime.now().day.toString());
   }
 }
 
-Model userModel = new Model();
-
-
+Model userModel = Model();

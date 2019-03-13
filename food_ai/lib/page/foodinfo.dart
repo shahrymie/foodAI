@@ -212,11 +212,12 @@ class _FoodPageState extends State<FoodPage> {
                   ),
                 ),
                 FloatingActionButton(
-                  onPressed: () {
+                  onPressed: () async {
                     userModel.updateInfo(_newServing);
                     userModel.updateCal(
                         (userModel.getNutrition(1) * _newServing) -
                             (userModel.getNutrition(1) * _oldServing));
+                    await new Future.delayed(const Duration(seconds: 1));
                     Navigator.pop(context);
                   },
                   tooltip: 'Save',
